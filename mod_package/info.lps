@@ -1,0 +1,2 @@
+vupmod#ClaudeAI:|author#jayqu:|gamever#11000:|ver#100:|
+intro#Chat with your pet using Anthropic's Claude AI! Supports streaming responses, conversation memory, model selection (Sonnet/Haiku/Opus), and custom personality prompts. Requires an Anthropic API key.:|

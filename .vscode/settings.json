@@ -1,0 +1,9 @@
+{
+    "omnisharp.projectLoadTimeout": 120,
+    "dotnet.defaultSolution": "VPet.Plugin.Claude.sln",
+    "files.exclude": {
+        "**/bin": true,
+        "**/obj": true,
+        "**/.vs": true
+    }
+}

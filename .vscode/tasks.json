@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/VPet.Plugin.Claude/VPet.Plugin.Claude.csproj",
+                "/property:Configuration=Release",
+                "/property:Platform=x64"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "clean",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "clean",
+                "${workspaceFolder}/VPet.Plugin.Claude/VPet.Plugin.Claude.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "restore",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "restore",
+                "${workspaceFolder}/VPet.Plugin.Claude/VPet.Plugin.Claude.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "deploy to VPet",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "$modDir = '${env:VPET_MOD_PATH}\\9999_ClaudeAI\\plugin'; if (-not (Test-Path $modDir)) { New-Item -ItemType Directory -Path $modDir -Force }; Copy-Item '${workspaceFolder}\\VPet.Plugin.Claude\\bin\\x64\\Release\\*' $modDir -Recurse -Force; Write-Host 'Deployed to' $modDir"
+            ],
+            "problemMatcher": [],
+            "dependsOn": "build"
+        }
+    ]
+}
