@@ -1,0 +1,29 @@
+AI Chat Settings#AIチャット設定:|
+AI Chat Configuration#AIチャット設定:|
+AI Provider:#AIプロバイダー：:|
+Anthropic API Key:#Anthropic APIキー：:|
+API Key:#APIキー：:|
+Google AI API Key:#Google AI APIキー：:|
+Get yours at console.anthropic.com#console.anthropic.comで取得:|
+Works with OpenAI, Groq, Together AI, OpenRouter, Ollama, LM Studio, etc.#OpenAI、Groq、Together AI、OpenRouter、Ollama、LM Studioなどに対応:|
+Get yours at aistudio.google.com#aistudio.google.comで取得:|
+Leave empty for default Anthropic API#空欄でデフォルトのAnthropic APIを使用:|
+Leave empty for OpenAI. For local LLMs try http://localhost:11434/v1/chat/completions#空欄でOpenAIを使用。ローカルLLMの場合は http://localhost:11434/v1/chat/completions を試してください:|
+Leave empty for default Google AI endpoint#空欄でデフォルトのGoogle AIエンドポイントを使用:|
+Model:#モデル：:|
+Custom API URL (optional):#カスタムAPI URL（任意）：:|
+Leave empty for default endpoint#空欄でデフォルトのエンドポイントを使用:|
+Max Tokens:#最大トークン数：:|
+History Messages:#履歴メッセージ数：:|
+Enable streaming responses#ストリーミング応答を有効にする:|
+System Prompt (pet personality):#システムプロンプト（ペットの性格）：:|
+Defines how your pet talks. Leave empty for default.#ペットの話し方を定義します。空欄でデフォルト。:|
+Clear Chat History#チャット履歴をクリア:|
+Save#保存:|
+Cancel#キャンセル:|
+Settings saved!#設定を保存しました！:|
+Chat history cleared!#チャット履歴をクリアしました！:|
+AI Chat#AIチャット:|
+Please set your API key in AI Chat Settings first!#先にAIチャット設定でAPIキーを設定してください！:|
+API call failed#API呼び出しに失敗しました:|
+(No response)#（応答なし）:|

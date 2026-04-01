@@ -1,0 +1,29 @@
+AI Chat Settings#AI 채팅 설정:|
+AI Chat Configuration#AI 채팅 설정:|
+AI Provider:#AI 제공자::|
+Anthropic API Key:#Anthropic API 키::|
+API Key:#API 키::|
+Google AI API Key:#Google AI API 키::|
+Get yours at console.anthropic.com#console.anthropic.com에서 발급:|
+Works with OpenAI, Groq, Together AI, OpenRouter, Ollama, LM Studio, etc.#OpenAI, Groq, Together AI, OpenRouter, Ollama, LM Studio 등 지원:|
+Get yours at aistudio.google.com#aistudio.google.com에서 발급:|
+Leave empty for default Anthropic API#기본 Anthropic API를 사용하려면 비워두세요:|
+Leave empty for OpenAI. For local LLMs try http://localhost:11434/v1/chat/completions#OpenAI를 사용하려면 비워두세요. 로컬 LLM은 http://localhost:11434/v1/chat/completions:|
+Leave empty for default Google AI endpoint#기본 Google AI 엔드포인트를 사용하려면 비워두세요:|
+Model:#모델::|
+Custom API URL (optional):#사용자 정의 API URL (선택사항)::|
+Leave empty for default endpoint#기본 엔드포인트를 사용하려면 비워두세요:|
+Max Tokens:#최대 토큰 수::|
+History Messages:#대화 기록 수::|
+Enable streaming responses#스트리밍 응답 활성화:|
+System Prompt (pet personality):#시스템 프롬프트 (펫 성격)::|
+Defines how your pet talks. Leave empty for default.#펫의 말투를 정의합니다. 기본값을 사용하려면 비워두세요.:|
+Clear Chat History#대화 기록 삭제:|
+Save#저장:|
+Cancel#취소:|
+Settings saved!#설정이 저장되었습니다!:|
+Chat history cleared!#대화 기록이 삭제되었습니다!:|
+AI Chat#AI 채팅:|
+Please set your API key in AI Chat Settings first!#먼저 AI 채팅 설정에서 API 키를 설정해주세요!:|
+API call failed#API 호출 실패:|
+(No response)#(응답 없음):|

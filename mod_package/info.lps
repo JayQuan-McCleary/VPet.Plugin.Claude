@@ -1,2 +1,6 @@
-vupmod#ClaudeAI:|author#jayqu:|gamever#11000:|ver#100:|
-intro#Chat with your pet using Anthropic's Claude AI! Supports streaming responses, conversation memory, model selection (Sonnet/Haiku/Opus), and custom personality prompts. Requires an Anthropic API key.:|
+vupmod#ClaudeAI:|author#jayqu:|gamever#11000:|ver#200:|
+intro#AI Chat Plugin — Talk to your pet using Claude, ChatGPT, Gemini, Groq, or local LLMs! Supports streaming responses, conversation memory, model selection, and custom personality prompts. Requires an API key (or local LLM).:|
+lang#zh-Hans:|intro#AI聊天插件 - 使用Claude、ChatGPT、Gemini、Groq或本地LLM与你的宠物聊天！支持流式响应、对话记忆、模型选择和自定义性格提示词。需要API密钥（或本地LLM）。:|
+lang#zh-Hant:|intro#AI聊天插件 - 使用Claude、ChatGPT、Gemini、Groq或本地LLM與你的寵物聊天！支援串流回應、對話記憶、模型選擇和自訂性格提示詞。需要API金鑰（或本地LLM）。:|
+lang#ja:|intro#AIチャットプラグイン - Claude、ChatGPT、Gemini、Groq、またはローカルLLMを使ってペットとチャット！ストリーミング応答、会話記憶、モデル選択、カスタム性格プロンプトに対応。APIキー（またはローカルLLM）が必要です。:|
+lang#ko:|intro#AI 채팅 플러그인 - Claude, ChatGPT, Gemini, Groq 또는 로컬 LLM으로 펫과 대화하세요! 스트리밍 응답, 대화 기억, 모델 선택, 맞춤 성격 프롬프트를 지원합니다. API 키(또는 로컬 LLM)가 필요합니다.:|

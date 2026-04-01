@@ -1,0 +1,29 @@
+AI Chat Settings#AI聊天设置:|
+AI Chat Configuration#AI聊天配置:|
+AI Provider:#AI提供商：:|
+Anthropic API Key:#Anthropic API密钥：:|
+API Key:#API密钥：:|
+Google AI API Key:#Google AI API密钥：:|
+Get yours at console.anthropic.com#在console.anthropic.com获取:|
+Works with OpenAI, Groq, Together AI, OpenRouter, Ollama, LM Studio, etc.#支持OpenAI、Groq、Together AI、OpenRouter、Ollama、LM Studio等:|
+Get yours at aistudio.google.com#在aistudio.google.com获取:|
+Leave empty for default Anthropic API#留空使用默认Anthropic API:|
+Leave empty for OpenAI. For local LLMs try http://localhost:11434/v1/chat/completions#留空使用OpenAI。本地LLM请尝试 http://localhost:11434/v1/chat/completions:|
+Leave empty for default Google AI endpoint#留空使用默认Google AI端点:|
+Model:#模型：:|
+Custom API URL (optional):#自定义API URL（可选）：:|
+Leave empty for default endpoint#留空使用默认端点:|
+Max Tokens:#最大令牌数：:|
+History Messages:#历史消息数：:|
+Enable streaming responses#启用流式响应:|
+System Prompt (pet personality):#系统提示词（宠物性格）：:|
+Defines how your pet talks. Leave empty for default.#定义宠物的说话方式。留空使用默认。:|
+Clear Chat History#清除聊天记录:|
+Save#保存:|
+Cancel#取消:|
+Settings saved!#设置已保存！:|
+Chat history cleared!#聊天记录已清除！:|
+AI Chat#AI聊天:|
+Please set your API key in AI Chat Settings first!#请先在AI聊天设置中设置您的API密钥！:|
+API call failed#API调用失败:|
+(No response)#（无响应）:|

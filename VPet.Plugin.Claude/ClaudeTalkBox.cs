@@ -6,10 +6,6 @@ using VPet_Simulator.Windows.Interface;
 
 namespace VPet.Plugin.Claude
 {
-    /// <summary>
-    /// TalkBox implementation that sends user messages to the Claude API.
-    /// VPet calls Responded() when the user submits a chat message.
-    /// </summary>
     public class ClaudeTalkBox : TalkBox
     {
         private readonly ClaudePlugin _plugin;
@@ -19,7 +15,7 @@ namespace VPet.Plugin.Claude
             _plugin = plugin;
         }
 
-        public override string APIName => "Claude";
+        public override string APIName => _plugin.LLMService?.Provider?.DisplayName ?? "AI Chat";
 
         public override void Responded(string content)
         {
@@ -30,7 +26,7 @@ namespace VPet.Plugin.Claude
 
             if (string.IsNullOrWhiteSpace(_plugin.PluginSettings.ApiKey))
             {
-                DisplayThinkToSayRnd("Please set your Anthropic API key in Claude AI Settings first!".Translate());
+                DisplayThinkToSayRnd("Please set your API key in AI Chat Settings first!".Translate());
                 return;
             }
 
@@ -45,7 +41,7 @@ namespace VPet.Plugin.Claude
                 {
                     try
                     {
-                        await _plugin.ClaudeService.SendMessageAsync(content, (delta) =>
+                        await _plugin.LLMService.SendMessageAsync(content, (delta) =>
                         {
                             sis.UpdateText(delta);
                         });
@@ -68,7 +64,7 @@ namespace VPet.Plugin.Claude
                 {
                     try
                     {
-                        string response = await _plugin.ClaudeService.SendMessageAsync(content);
+                        string response = await _plugin.LLMService.SendMessageAsync(content);
                         if (!string.IsNullOrEmpty(response))
                             DisplayThinkToSayRnd(response);
                         else
