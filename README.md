@@ -1,200 +1,146 @@
 # VPet.Plugin.Claude
 
-A VPet-Simulator plugin that lets your desktop pet chat using **Anthropic's Claude AI** instead of ChatGPT.
+A VPet-Simulator plugin that lets your desktop pet chat using real AI — supports **Claude, ChatGPT, Gemini, Groq, and local LLMs**.
+
+[Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3672196855) | [Buy me a coffee](https://ko-fi.com/theapplesalesman)
+
+## Supported Providers
+
+| Provider | Models | Cost |
+|----------|--------|------|
+| **Anthropic (Claude)** | Haiku, Sonnet, Opus | ~$5 for ~25,000 messages (Haiku) |
+| **OpenAI Compatible** | GPT-4o-mini, plus Groq, Together AI, OpenRouter | Varies; Groq has free tier |
+| **Google AI (Gemini)** | Gemini 2.5 Flash, Gemini 2.5 Pro | Free tier available |
+| **Local LLMs** | Ollama, LM Studio, any OpenAI-compatible endpoint | Free (your hardware) |
 
 ## Features
 
-- **Direct Anthropic API** — Calls Claude's `/v1/messages` endpoint natively (no OpenAI proxy needed)
-- **Streaming responses** — Pet's speech bubble updates in real-time as Claude generates text
+- **Multi-provider support** — Switch between AI providers from the settings menu
+- **Streaming responses** — Pet's speech bubble updates in real-time as the AI generates text
 - **Conversation memory** — Maintains chat history across messages (configurable length)
-- **Model selection** — Choose between Claude Sonnet, Haiku, or Opus
 - **Custom personality** — Set a system prompt to define how your pet talks
+- **Localization** — English, 简体中文, 繁體中文, 日本語, 한국어
 - **Settings UI** — WPF settings window accessible from the pet's menu
+- **Legacy migration** — Existing Claude-only settings are automatically migrated
 
 ## Requirements
 
 - [VPet-Simulator](https://store.steampowered.com/app/1920960/VPet) v1.10+
-- An **Anthropic API key** — get one at [console.anthropic.com](https://console.anthropic.com/)
+- An API key from your chosen provider (or a local LLM running)
 - Windows x64
-- [.NET SDK 8.0+](https://dotnet.microsoft.com/download) (for building)
-- [.NET Framework 4.6.2 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net462) (targeting pack)
+
+### For building from source
+
+- [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
 - [VS Code](https://code.visualstudio.com/) with the **C# Dev Kit** extension
 
-## Setting Up VS Code
+## Quick Start
 
-### 1. Install prerequisites
+1. Subscribe on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3672196855)
+2. Launch VPet, enable the mod in Settings → MOD, restart
+3. Open Settings → MOD Config → **AI Chat Settings**
+4. Select your AI provider, paste your API key, choose a model
+5. For local LLMs: set Custom API URL (e.g. `http://localhost:11434/v1/chat/completions` for Ollama)
+6. Click Save
+7. Settings → Usage Patterns → Custom Chat Interface → Select Claude/ChatGPT/Gemini
 
-- Install the **.NET SDK 8.0+** from <https://dotnet.microsoft.com/download>
-- Install the **.NET Framework 4.6.2 Developer Pack** from <https://dotnet.microsoft.com/en-us/download/dotnet-framework/net462>
-- Both are needed: the SDK provides `dotnet build`, the Developer Pack provides the net462 targeting assemblies
+## Where to get API keys
 
-### 2. Install VS Code extensions
-
-Open VS Code and install these (they'll be auto-suggested when you open the project):
-
-- **C# Dev Kit** (`ms-dotnettools.csdevkit`) — full C# language support, solution explorer, etc.
-- **C#** (`ms-dotnettools.csharp`) — syntax highlighting, IntelliSense, debugging
-- **.NET Runtime** (`ms-dotnettools.vscode-dotnet-runtime`) — runtime install helper
-
-### 3. Open the project
-
-```bash
-cd VPet.Plugin.Claude
-code .
-```
-
-VS Code will detect the `.sln` file and load the project. You'll see the Solution Explorer in the sidebar.
-
-### 4. Restore NuGet packages
-
-Open the terminal in VS Code (Ctrl+`) and run:
-
-```bash
-dotnet restore VPet.Plugin.Claude/VPet.Plugin.Claude.csproj
-```
-
-This pulls in `VPet-Simulator.Windows.Interface` and `Newtonsoft.Json`.
-
-### 5. Build
-
-Press **Ctrl+Shift+B** (the default build shortcut). This runs the pre-configured build task.
-
-Or from the terminal:
-
-```bash
-dotnet build VPet.Plugin.Claude/VPet.Plugin.Claude.csproj -c Release -p:Platform=x64
-```
-
-Output goes to `VPet.Plugin.Claude/bin/x64/Release/`.
-
-### 6. Deploy to VPet
-
-**Manual copy:**
-
-```powershell
-# Find your VPet install (usually Steam)
-# Example: C:\Program Files (x86)\Steam\steamapps\common\VPet\VPet-Simulator.Windows
-
-# Create the mod folder
-mkdir "C:\...\VPet-Simulator.Windows\mod\9999_ClaudeAI\plugin"
-
-# Copy the build output
-copy VPet.Plugin.Claude\bin\x64\Release\VPet.Plugin.Claude.dll "C:\...\mod\9999_ClaudeAI\plugin\"
-copy VPet.Plugin.Claude\bin\x64\Release\Newtonsoft.Json.dll "C:\...\mod\9999_ClaudeAI\plugin\"
-
-# Copy the mod descriptor
-copy mod_package\info.lps "C:\...\mod\9999_ClaudeAI\"
-```
-
-**Or use a symlink (recommended for development):**
-
-```powershell
-# Run PowerShell as Administrator
-cd "C:\...\VPet-Simulator.Windows"
-cmd /c mklink /d "mod\9999_ClaudeAI" "C:\path\to\VPet.Plugin.Claude\mod_package"
-```
-
-Then make the `mod_package/plugin/` folder and copy your DLLs there after each build.
-
-**Or use the deploy task:** Set the `VPET_MOD_PATH` environment variable to your VPet mod folder, then run the "deploy to VPet" task from VS Code's task runner (Ctrl+Shift+P → "Tasks: Run Task" → "deploy to VPet").
-
-## Project Structure
-
-```
-VPet.Plugin.Claude/
-├── .vscode/
-│   ├── tasks.json          # Build/deploy tasks (Ctrl+Shift+B)
-│   ├── settings.json       # VS Code workspace settings
-│   └── extensions.json     # Recommended extensions
-├── VPet.Plugin.Claude/
-│   ├── VPet.Plugin.Claude.csproj   # Project file
-│   ├── ClaudePlugin.cs             # Main plugin entry point (hooks TalkAPI)
-│   ├── ClaudeService.cs            # Anthropic API client + streaming
-│   ├── ClaudeSettings.cs           # Settings persistence
-│   ├── ClaudeSettingsWindow.xaml    # Settings UI layout
-│   └── ClaudeSettingsWindow.xaml.cs # Settings UI logic
-├── mod_package/
-│   └── info.lps            # VPet mod descriptor
-├── VPet.Plugin.Claude.sln  # Solution file
-└── README.md
-```
+| Provider | URL |
+|----------|-----|
+| Anthropic | [console.anthropic.com](https://console.anthropic.com/) |
+| OpenAI | [platform.openai.com](https://platform.openai.com/) |
+| Google AI | [aistudio.google.com](https://aistudio.google.com/) |
+| Groq (free) | [console.groq.com](https://console.groq.com/) |
+| Local LLM | No key needed |
 
 ## Configuration
 
-After installing and launching VPet:
-
-1. Right-click your pet → **System** → **Settings**
-2. Find **Claude AI Settings** in the MOD Config menu
-3. Enter your **Anthropic API key**
-4. (Optional) Change the model, adjust max tokens, or write a custom system prompt
-5. Click **Save**
-6. Start chatting!
-
 | Setting | Default | Description |
 |---------|---------|-------------|
-| API Key | *(empty)* | Your Anthropic API key (starts with `sk-ant-`) |
-| Model | `claude-sonnet-4-20250514` | Which Claude model to use |
-| Custom API URL | *(empty)* | Override the API endpoint (for proxies) |
+| AI Provider | Anthropic | Which provider to use |
+| API Key | *(empty)* | Your provider's API key |
+| Model | *(provider default)* | Which model to use |
+| Custom API URL | *(empty)* | Override the API endpoint (for local LLMs or proxies) |
 | Max Tokens | `1024` | Maximum response length |
 | History Messages | `20` | How many messages to keep in context |
 | Enable Streaming | `true` | Stream responses word-by-word |
 | System Prompt | *(default pet personality)* | Customize the pet's personality |
 
-## How It Works
+## Project Structure
 
-The plugin hooks into VPet's `TalkAPI` delegate — VPet calls this whenever the user types a message in the chat box. When a message comes in:
+```
+VPet.Plugin.Claude/
+├── VPet.Plugin.Claude/
+│   ├── VPet.Plugin.Claude.csproj   # Project file
+│   ├── ClaudePlugin.cs             # Main plugin entry point
+│   ├── ClaudeTalkBox.cs            # TalkBox implementation
+│   ├── ILLMProvider.cs             # Provider interface
+│   ├── LLMProvider.cs              # Provider enum
+│   ├── LLMService.cs               # API client + streaming
+│   ├── LLMSettings.cs              # Settings persistence
+│   ├── ClaudeSettingsWindow.xaml    # Settings UI layout
+│   ├── ClaudeSettingsWindow.xaml.cs # Settings UI logic
+│   └── Providers/
+│       ├── AnthropicProvider.cs     # Anthropic Claude adapter
+│       ├── OpenAICompatibleProvider.cs  # OpenAI/Groq/etc adapter
+│       └── GoogleAIProvider.cs      # Google AI Gemini adapter
+├── mod_package/
+│   ├── info.lps                    # VPet mod descriptor
+│   └── lang/                      # Translations (zh-Hans, zh-Hant, ja, ko)
+├── VPet.Plugin.Claude.sln
+└── README.md
+```
 
-1. The message is added to the conversation history
-2. An HTTP POST is sent to Anthropic's Messages API with the full conversation
-3. If streaming is enabled, the pet's speech bubble updates in real-time via SSE
-4. The final response is added to history for context in future messages
+## Building
+
+```bash
+dotnet restore VPet.Plugin.Claude/VPet.Plugin.Claude.csproj
+dotnet build VPet.Plugin.Claude/VPet.Plugin.Claude.csproj -c Release -p:Platform=x64
+```
+
+Output goes to `VPet.Plugin.Claude/bin/x64/Release/`.
 
 ## Custom System Prompts
 
-The system prompt shapes your pet's personality. Here are some examples:
+The system prompt shapes your pet's personality. Examples:
 
-**Tsundere pet:**
-
+**Tsundere:**
 ```
-You are a tsundere desktop pet. You pretend not to care about the user but 
-secretly you really do. Use phrases like "it's not like I care" and "hmph". 
-Keep responses short (1-2 sentences). Occasionally show your caring side.
-```
-
-**Helpful assistant pet:**
-
-```
-You are a helpful desktop pet assistant. Help the user with quick questions, 
-reminders, and encouragement. Keep responses brief and practical. Be warm 
-but efficient.
+You are a tsundere desktop pet. You pretend not to care about the user but
+secretly you really do. Use phrases like "it's not like I care" and "hmph".
+Keep responses short (1-2 sentences).
 ```
 
-**Gamer pet:**
-
+**Helpful assistant:**
 ```
-You are a gaming-obsessed desktop pet. Reference video games constantly, 
-use gaming terminology, and get excited about gaming topics. Keep it short 
-and enthusiastic!
+You are a helpful desktop pet assistant. Help the user with quick questions,
+reminders, and encouragement. Keep responses brief and practical.
+```
+
+**Gamer:**
+```
+You are a gaming-obsessed desktop pet. Reference video games constantly,
+use gaming terminology, and get excited about gaming topics.
 ```
 
 ## Troubleshooting
 
 | Error | Fix |
 |-------|-----|
-| `dotnet build` fails with "net462 not found" | Install the [.NET Framework 4.6.2 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net462) |
-| NuGet restore fails | Run `dotnet nuget locals all --clear` then `dotnet restore` again |
 | 401 Unauthorized | Check your API key is correct |
 | 400 Bad Request | Clear chat history and try again |
-| 429 Rate Limited | Wait a moment, you're sending too many requests |
-| No IntelliSense in VS Code | Make sure C# Dev Kit is installed and the solution loaded (check bottom status bar) |
-| XAML designer not available | Expected — VS Code doesn't have a WPF visual designer. Edit XAML as text. |
+| 429 Rate Limited | Wait a moment, or switch to a provider with a free tier |
+| Gemini 404 | Use `gemini-2.5-flash` instead of `gemini-2.0-flash` |
+| Pet stuck thinking | Check API key and credit balance |
 
 ## License
 
-Apache License 2.0 — same as VPet.Plugin.Demo
+Apache License 2.0
 
 ## Credits
 
 - [VPet-Simulator](https://github.com/LorisYounger/VPet) by LorisYounger
-- [VPet.Plugin.Demo](https://github.com/LorisYounger/VPet.Plugin.Demo) — the official plugin examples
-- [Anthropic Claude API](https://docs.anthropic.com/) — the AI backend
+- [Anthropic Claude API](https://docs.anthropic.com/)
+- [OpenAI API](https://platform.openai.com/docs)
+- [Google AI Gemini API](https://ai.google.dev/)
