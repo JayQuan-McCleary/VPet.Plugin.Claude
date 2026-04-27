@@ -2,20 +2,14 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="AI Chat Settings"
-        Height="640" Width="450"
+        Height="820" Width="540"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
+        MinHeight="600" MinWidth="500"
         Background="#FFF5F5F5">
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -26,80 +20,143 @@
                    FontSize="18" FontWeight="Bold" Margin="0,0,0,15"
                    Foreground="#FF3F7FA0"/>
 
-        <!-- Provider Selection -->
-        <StackPanel Grid.Row="1" Margin="0,0,0,10">
-            <TextBlock Text="AI Provider:" FontWeight="SemiBold"/>
-            <ComboBox x:Name="cmbProvider" Height="28" Padding="4,2"
-                      SelectionChanged="CmbProvider_SelectionChanged">
-                <ComboBoxItem Content="Anthropic (Claude)" Tag="Anthropic"/>
-                <ComboBoxItem Content="OpenAI Compatible" Tag="OpenAICompatible"/>
-                <ComboBoxItem Content="Google AI (Gemini)" Tag="GoogleAI"/>
-            </ComboBox>
-        </StackPanel>
+        <!-- Scrollable settings content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="0,0,8,0">
 
-        <!-- API Key -->
-        <StackPanel Grid.Row="2" Margin="0,0,0,10">
-            <TextBlock x:Name="txtApiKeyLabel" Text="API Key:" FontWeight="SemiBold"/>
-            <TextBlock x:Name="txtApiKeyHint" Text="Enter your API key" FontSize="11" Foreground="Gray" Margin="0,2,0,4"/>
-            <PasswordBox x:Name="txtApiKey" Height="28" Padding="4,2"/>
-        </StackPanel>
+                <!-- Provider Selection -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="AI Provider:" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="cmbProvider" Height="28" Padding="4,2"
+                              SelectionChanged="CmbProvider_SelectionChanged">
+                        <ComboBoxItem Content="Anthropic (Claude)" Tag="Anthropic"/>
+                        <ComboBoxItem Content="OpenAI Compatible" Tag="OpenAICompatible"/>
+                        <ComboBoxItem Content="Google AI (Gemini)" Tag="GoogleAI"/>
+                    </ComboBox>
+                </StackPanel>
 
-        <!-- Model -->
-        <StackPanel Grid.Row="3" Margin="0,0,0,10">
-            <TextBlock Text="Model:" FontWeight="SemiBold"/>
-            <ComboBox x:Name="cmbModel" Height="28" IsEditable="True" Padding="4,2"/>
-        </StackPanel>
+                <!-- API Key -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock x:Name="txtApiKeyLabel" Text="API Key:" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="txtApiKeyHint" Text="Enter your API key" FontSize="11" Foreground="Gray" Margin="0,2,0,4"/>
+                    <PasswordBox x:Name="txtApiKey" Height="28" Padding="4,2"/>
+                </StackPanel>
 
-        <!-- Custom API URL -->
-        <StackPanel Grid.Row="4" Margin="0,0,0,10">
-            <TextBlock Text="Custom API URL (optional):" FontWeight="SemiBold"/>
-            <TextBlock x:Name="txtApiUrlHint" Text="Leave empty for default endpoint" FontSize="11" Foreground="Gray" Margin="0,2,0,4"/>
-            <TextBox x:Name="txtApiUrl" Height="28" Padding="4,2"/>
-        </StackPanel>
+                <!-- Model -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Model:" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="cmbModel" Height="28" IsEditable="True" Padding="4,2"/>
+                </StackPanel>
 
-        <!-- Max Tokens & History -->
-        <Grid Grid.Row="5" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+                <!-- Custom API URL -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Custom API URL (optional):" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="txtApiUrlHint" Text="Leave empty for default endpoint" FontSize="11" Foreground="Gray" Margin="0,2,0,4"/>
+                    <TextBox x:Name="txtApiUrl" Height="28" Padding="4,2"/>
+                </StackPanel>
 
-            <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                <TextBlock Text="Max Tokens:" FontWeight="SemiBold"/>
-                <TextBox x:Name="txtMaxTokens" Height="28" Padding="4,2"/>
+                <!-- Max Tokens & History -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                        <TextBlock Text="Max Tokens:" FontWeight="SemiBold"/>
+                        <TextBox x:Name="txtMaxTokens" Height="28" Padding="4,2"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                        <TextBlock Text="History Messages:" FontWeight="SemiBold"/>
+                        <TextBox x:Name="txtMaxHistory" Height="28" Padding="4,2"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Streaming + Save History Toggles -->
+                <CheckBox x:Name="chkStreaming"
+                          Content="Enable streaming responses"
+                          Margin="0,0,0,6" FontWeight="SemiBold"/>
+                <CheckBox x:Name="chkSaveHistory"
+                          Content="Save chat history to disk (persists across restarts)"
+                          Margin="0,0,0,12" FontWeight="SemiBold"/>
+
+                <!-- Pet description (separate from personality so all presets share it) -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Pet Description (appearance &amp; identity):" FontWeight="SemiBold"/>
+                    <TextBlock Text="Describe your character — applied to every preset. e.g. 'Megumin from KonoSuba — silver hair, witch hat, red eyepatch.'"
+                               FontSize="11" Foreground="Gray" Margin="0,2,0,4" TextWrapping="Wrap"/>
+                    <TextBox x:Name="txtPetDescription" MinHeight="50" MaxHeight="80"
+                             AcceptsReturn="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             Padding="4"/>
+                </StackPanel>
+
+                <!-- Additional details (names, preferences, lore — anything else) -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Additional Details:" FontWeight="SemiBold"/>
+                    <TextBlock Text="Anything else the AI should know — your name, the pet's name, inside jokes, lore, preferences."
+                               FontSize="11" Foreground="Gray" Margin="0,2,0,4" TextWrapping="Wrap"/>
+                    <TextBox x:Name="txtAdditionalDetails" MinHeight="50" MaxHeight="80"
+                             AcceptsReturn="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             Padding="4"/>
+                </StackPanel>
+
+                <!-- Preset selector -->
+                <StackPanel Margin="0,0,0,8">
+                    <TextBlock Text="Preset:" FontWeight="SemiBold"/>
+                    <TextBlock Text="Pick a saved personality, or edit and click 'Save as Preset...'"
+                               FontSize="11" Foreground="Gray" Margin="0,2,0,4"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="cmbPreset" Grid.Column="0" Height="28" Padding="4,2"
+                                  SelectionChanged="CmbPreset_SelectionChanged"/>
+                        <Button x:Name="btnPresetSave" Grid.Column="1"
+                                Content="Save as..." Width="80" Height="28" Margin="6,0,0,0"
+                                Click="BtnPresetSave_Click"/>
+                        <Button x:Name="btnPresetDelete" Grid.Column="2"
+                                Content="Delete" Width="60" Height="28" Margin="4,0,0,0"
+                                Click="BtnPresetDelete_Click"/>
+                        <Button x:Name="btnPresetRestore" Grid.Column="3"
+                                Content="Restore Defaults" Width="115" Height="28" Margin="4,0,0,0"
+                                Click="BtnPresetRestore_Click"
+                                ToolTip="Re-add all built-in presets, overwriting any you've modified with the same name."/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- System Prompt -->
+                <StackPanel Margin="0,0,0,5">
+                    <TextBlock Text="System Prompt (pet personality):" FontWeight="SemiBold"/>
+                    <TextBlock Text="Defines how your pet talks. Leave empty for default."
+                               FontSize="11" Foreground="Gray" Margin="0,2,0,4"/>
+                </StackPanel>
+
+                <TextBox x:Name="txtSystemPrompt" MinHeight="100" MaxHeight="200"
+                         AcceptsReturn="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         Padding="4" Margin="0,0,0,10"/>
+
             </StackPanel>
-
-            <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                <TextBlock Text="History Messages:" FontWeight="SemiBold"/>
-                <TextBox x:Name="txtMaxHistory" Height="28" Padding="4,2"/>
-            </StackPanel>
-        </Grid>
-
-        <!-- Streaming Toggle -->
-        <CheckBox Grid.Row="6" x:Name="chkStreaming"
-                  Content="Enable streaming responses"
-                  Margin="0,0,0,10" FontWeight="SemiBold"/>
-
-        <!-- System Prompt -->
-        <StackPanel Grid.Row="7" Margin="0,0,0,5">
-            <TextBlock Text="System Prompt (pet personality):" FontWeight="SemiBold"/>
-            <TextBlock Text="Defines how your pet talks. Leave empty for default."
-                       FontSize="11" Foreground="Gray" Margin="0,2,0,4"/>
-        </StackPanel>
-
-        <TextBox Grid.Row="8" x:Name="txtSystemPrompt"
-                 AcceptsReturn="True" TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto"
-                 Padding="4" Margin="0,0,0,10"/>
+        </ScrollViewer>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="9" Orientation="Horizontal"
-                    HorizontalAlignment="Right">
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button x:Name="btnViewHistory" Content="View History"
+                    Width="100" Height="30" Margin="0,0,8,0"
+                    Click="BtnViewHistory_Click"/>
             <Button x:Name="btnClearHistory" Content="Clear Chat History"
-                    Width="130" Height="30" Margin="0,0,10,0"
+                    Width="130" Height="30" Margin="0,0,8,0"
                     Click="BtnClearHistory_Click"/>
             <Button x:Name="btnSave" Content="Save"
-                    Width="80" Height="30" Margin="0,0,10,0"
+                    Width="80" Height="30" Margin="0,0,8,0"
                     Click="BtnSave_Click" FontWeight="SemiBold"
                     Background="#FF3F7FA0" Foreground="White"/>
             <Button x:Name="btnCancel" Content="Cancel"

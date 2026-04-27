@@ -19,6 +19,9 @@ A VPet-Simulator plugin that lets your desktop pet chat using real AI — suppor
 - **Streaming responses** — Pet's speech bubble updates in real-time as the AI generates text
 - **Conversation memory** — Maintains chat history across messages (configurable length)
 - **Custom personality** — Set a system prompt to define how your pet talks
+- **Prompt presets** — Save and switch between named personalities (Tsundere, Helpful Assistant, Roleplay, plus your own)
+- **Persistent chat history** — Conversation survives restarts; view/export via the settings window
+- **Friendly error messages** — Rate limits, invalid keys, and bad requests get a helpful explanation
 - **Localization** — English, 简体中文, 繁體中文, 日本語, 한국어
 - **Settings UI** — WPF settings window accessible from the pet's menu
 - **Legacy migration** — Existing Claude-only settings are automatically migrated
@@ -54,6 +57,20 @@ A VPet-Simulator plugin that lets your desktop pet chat using real AI — suppor
 | Groq (free) | [console.groq.com](https://console.groq.com/) |
 | Local LLM | No key needed |
 
+### Custom endpoints (Chinese providers, proxies, etc.)
+
+Any OpenAI-compatible endpoint works via the **OpenAI Compatible** provider — just paste the URL into **Custom API URL**. Tested examples:
+
+| Service | Custom API URL |
+|---------|---------------|
+| DeepSeek | `https://api.deepseek.com/v1/chat/completions` |
+| 火山方舟 (Volcano Ark) | `https://ark.cn-beijing.volces.com/api/v3/chat/completions` |
+| 智谱 GLM | `https://open.bigmodel.cn/api/paas/v4/chat/completions` |
+| Together AI | `https://api.together.xyz/v1/chat/completions` |
+| OpenRouter | `https://openrouter.ai/api/v1/chat/completions` |
+
+For Volcano Ark specifically, use your **inference endpoint ID** as the model name (not the model family name) — e.g. `ep-20240xxx-xxxxx`.
+
 ## Configuration
 
 | Setting | Default | Description |
@@ -65,6 +82,8 @@ A VPet-Simulator plugin that lets your desktop pet chat using real AI — suppor
 | Max Tokens | `1024` | Maximum response length |
 | History Messages | `20` | How many messages to keep in context |
 | Enable Streaming | `true` | Stream responses word-by-word |
+| Save History to Disk | `true` | Persist chat history across restarts (`LLMHistory*.json`) |
+| Preset | *(custom)* | Pick a saved system-prompt preset, or save the current one |
 | System Prompt | *(default pet personality)* | Customize the pet's personality |
 
 ## Project Structure
@@ -133,6 +152,7 @@ use gaming terminology, and get excited about gaming topics.
 | 429 Rate Limited | Wait a moment, or switch to a provider with a free tier |
 | Gemini 404 | Use `gemini-2.5-flash` instead of `gemini-2.0-flash` |
 | Pet stuck thinking | Check API key and credit balance |
+| Chat input box missing after update | Settings → Usage Patterns → Custom Chat Interface → reselect Claude/ChatGPT/Gemini. VPet binds to the plugin DLL by reference, so replacing the DLL can drop the selection. |
 
 ## License
 

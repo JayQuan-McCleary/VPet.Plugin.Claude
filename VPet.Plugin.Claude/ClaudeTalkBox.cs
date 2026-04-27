@@ -15,7 +15,8 @@ namespace VPet.Plugin.Claude
             _plugin = plugin;
         }
 
-        public override string APIName => _plugin.LLMService?.Provider?.DisplayName ?? "AI Chat";
+        // Stable name so VPet's chat interface selection doesn't drift when the user switches provider.
+        public override string APIName => "AI Chat";
 
         public override void Responded(string content)
         {

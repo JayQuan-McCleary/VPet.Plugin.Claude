@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +10,7 @@ namespace VPet.Plugin.Claude
     {
         private readonly ClaudePlugin _plugin;
         private bool _loading;
+        private bool _suppressPresetChange;
 
         public ClaudeSettingsWindow(ClaudePlugin plugin)
         {
@@ -35,13 +37,173 @@ namespace VPet.Plugin.Claude
             txtMaxTokens.Text = (s.MaxTokens > 0 ? s.MaxTokens : 1024).ToString();
             txtMaxHistory.Text = (s.MaxHistoryMessages > 0 ? s.MaxHistoryMessages : 20).ToString();
             chkStreaming.IsChecked = s.EnableStreaming;
+            chkSaveHistory.IsChecked = s.SaveHistoryToDisk;
+            txtPetDescription.Text = s.PetDescription ?? "";
+            txtAdditionalDetails.Text = s.AdditionalDetails ?? "";
             txtSystemPrompt.Text = s.SystemPrompt ?? "";
+
+            RefreshPresetList(s.ActivePresetName);
 
             // Update model list for the selected provider, then set the saved model
             UpdateProviderUI(s.Provider);
             cmbModel.Text = string.IsNullOrWhiteSpace(s.Model)
                 ? LLMService.CreateProvider(s.Provider).DefaultModel
                 : s.Model;
+        }
+
+        private void RefreshPresetList(string selectName)
+        {
+            _suppressPresetChange = true;
+            try
+            {
+                cmbPreset.Items.Clear();
+                cmbPreset.Items.Add(new ComboBoxItem { Content = "(custom)".Translate(), Tag = "" });
+
+                foreach (var preset in _plugin.PluginSettings.Presets ?? Enumerable.Empty<PromptPreset>())
+                {
+                    cmbPreset.Items.Add(new ComboBoxItem { Content = preset.Name, Tag = preset.Name });
+                }
+
+                int matchIndex = 0;
+                if (!string.IsNullOrEmpty(selectName))
+                {
+                    for (int i = 0; i < cmbPreset.Items.Count; i++)
+                    {
+                        if (cmbPreset.Items[i] is ComboBoxItem item &&
+                            string.Equals(item.Tag?.ToString(), selectName, StringComparison.Ordinal))
+                        {
+                            matchIndex = i;
+                            break;
+                        }
+                    }
+                }
+                cmbPreset.SelectedIndex = matchIndex;
+            }
+            finally
+            {
+                _suppressPresetChange = false;
+            }
+        }
+
+        private void CmbPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_loading || _suppressPresetChange) return;
+            if (cmbPreset.SelectedItem is not ComboBoxItem item) return;
+
+            string name = item.Tag?.ToString() ?? "";
+            if (string.IsNullOrEmpty(name)) return;  // (custom) — leave textbox alone
+
+            var preset = _plugin.PluginSettings.Presets?
+                .FirstOrDefault(p => string.Equals(p.Name, name, StringComparison.Ordinal));
+            if (preset != null)
+            {
+                txtSystemPrompt.Text = preset.Prompt ?? "";
+            }
+        }
+
+        private void BtnPresetSave_Click(object sender, RoutedEventArgs e)
+        {
+            string defaultName = (cmbPreset.SelectedItem is ComboBoxItem item &&
+                                  !string.IsNullOrEmpty(item.Tag?.ToString()))
+                ? item.Tag.ToString()
+                : "";
+
+            var dlg = new PresetNameDialog(
+                "Save as Preset".Translate(),
+                "Preset name:".Translate(),
+                defaultName)
+            { Owner = this };
+
+            if (dlg.ShowDialog() != true)
+                return;
+
+            string name = dlg.EnteredName;
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            name = name.Trim();
+
+            var presets = _plugin.PluginSettings.Presets ??= new System.Collections.Generic.List<PromptPreset>();
+            var existing = presets.FirstOrDefault(p =>
+                string.Equals(p.Name, name, StringComparison.Ordinal));
+
+            if (existing != null)
+            {
+                var confirm = MessageBox.Show(
+                    "Preset '{name}' already exists. Overwrite?".Translate().Replace("{name}", name),
+                    "Save as Preset".Translate(),
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (confirm != MessageBoxResult.Yes)
+                    return;
+                existing.Prompt = txtSystemPrompt.Text;
+            }
+            else
+            {
+                presets.Add(new PromptPreset { Name = name, Prompt = txtSystemPrompt.Text });
+            }
+
+            RefreshPresetList(name);
+        }
+
+        private void BtnPresetRestore_Click(object sender, RoutedEventArgs e)
+        {
+            var confirm = MessageBox.Show(
+                "Re-add all built-in presets? This overwrites any built-in preset you've modified, but keeps your custom-named presets.".Translate(),
+                "Restore Default Presets".Translate(),
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes)
+                return;
+
+            var presets = _plugin.PluginSettings.Presets ??= new System.Collections.Generic.List<PromptPreset>();
+            var defaults = LLMSettings.CreateDefaultPresets();
+
+            foreach (var def in defaults)
+            {
+                var existing = presets.FirstOrDefault(p =>
+                    string.Equals(p.Name, def.Name, StringComparison.Ordinal));
+                if (existing != null)
+                    existing.Prompt = def.Prompt;
+                else
+                    presets.Add(def);
+            }
+
+            // Refresh dropdown; if currently-selected preset got refreshed, also reload its prompt into the textbox
+            string currentName = (cmbPreset.SelectedItem is ComboBoxItem ci) ? ci.Tag?.ToString() ?? "" : "";
+            RefreshPresetList(currentName);
+            if (!string.IsNullOrEmpty(currentName))
+            {
+                var refreshed = presets.FirstOrDefault(p =>
+                    string.Equals(p.Name, currentName, StringComparison.Ordinal));
+                if (refreshed != null)
+                    txtSystemPrompt.Text = refreshed.Prompt ?? "";
+            }
+
+            MessageBox.Show("Default presets restored.".Translate(),
+                "Restore Default Presets".Translate());
+        }
+
+        private void BtnPresetDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (cmbPreset.SelectedItem is not ComboBoxItem item) return;
+            string name = item.Tag?.ToString() ?? "";
+            if (string.IsNullOrEmpty(name))
+            {
+                MessageBox.Show("Select a preset to delete first.".Translate(),
+                    "Delete Preset".Translate());
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                "Delete preset '{name}'?".Translate().Replace("{name}", name),
+                "Delete Preset".Translate(),
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes)
+                return;
+
+            var presets = _plugin.PluginSettings.Presets;
+            if (presets == null) return;
+            presets.RemoveAll(p => string.Equals(p.Name, name, StringComparison.Ordinal));
+            RefreshPresetList("");
         }
 
         private void CmbProvider_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -119,7 +281,13 @@ namespace VPet.Plugin.Claude
             s.Model = cmbModel.Text;
             s.ApiUrl = txtApiUrl.Text;
             s.SystemPrompt = txtSystemPrompt.Text;
+            s.PetDescription = txtPetDescription.Text;
+            s.AdditionalDetails = txtAdditionalDetails.Text;
             s.EnableStreaming = chkStreaming.IsChecked ?? true;
+            s.SaveHistoryToDisk = chkSaveHistory.IsChecked ?? true;
+
+            if (cmbPreset.SelectedItem is ComboBoxItem activeItem)
+                s.ActivePresetName = activeItem.Tag?.ToString() ?? "";
 
             if (int.TryParse(txtMaxTokens.Text, out int maxTokens) && maxTokens > 0)
                 s.MaxTokens = maxTokens;
@@ -127,11 +295,11 @@ namespace VPet.Plugin.Claude
             if (int.TryParse(txtMaxHistory.Text, out int maxHistory) && maxHistory > 0)
                 s.MaxHistoryMessages = maxHistory;
 
-            // Recreate provider if it changed, and clear history
+            // Recreate provider if it changed. Don't clear history — modern APIs handle
+            // assistant messages from a different model fine, and clearing surprised users.
             if (s.Provider != oldProvider)
             {
                 _plugin.LLMService?.RecreateProvider();
-                _plugin.LLMService?.ClearHistory();
             }
 
             _plugin.Save();
@@ -150,5 +318,11 @@ namespace VPet.Plugin.Claude
             _plugin.LLMService?.ClearHistory();
             MessageBox.Show("Chat history cleared!".Translate(), "AI Chat".Translate(), MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void BtnViewHistory_Click(object sender, RoutedEventArgs e)
+        {
+            new ChatHistoryWindow(_plugin) { Owner = this }.ShowDialog();
+        }
     }
+
 }

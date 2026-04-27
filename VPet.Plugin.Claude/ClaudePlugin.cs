@@ -19,7 +19,7 @@ namespace VPet.Plugin.Claude
         {
             PluginSettings = LLMSettings.Load(this);
 
-            LLMService = new LLMService(PluginSettings);
+            LLMService = new LLMService(PluginSettings, LLMSettings.GetHistoryPath(this));
 
             MW.TalkAPI.Add(new ClaudeTalkBox(this));
 
